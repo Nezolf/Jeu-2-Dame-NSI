@@ -4,7 +4,7 @@ Ce projet a été créé dans le cadre d'un projet scolaire.
 
 ## A propos 🔎
 Dans ce projet qui à pour but de développer entièrement de 0 un jeu de Dames en python !
-Nous sommes 3 à travailler sur ce projet.
+Nous sommes 3 à travailler sur ce projet, et nous avons pour consigne de tenir à jours un carnet de projet.
 
 A noter que dans ce projet, nous avons quelques restrictions :
   - Les Class sont interdites
