@@ -22,13 +22,6 @@ def print_board(board):
             print(PAWNS_CHARS[board[y][x]], end=" ")
         print(y)
     print("A B C D E F G H I J")
-
-
-# DEF -> Selection du pion
-    # Demander un entrée comme ceci -> "Selectionner un pion >> "
-        # - Transformer l'input au format "E4" en coordonées sur le plateau
-        # - Vérifier que les coordonées donné sont bien celle d'un pion du joueur
-        # - Renvoyer les coordonées valide du pion
     
 def select_pawn(board, player):
     """
