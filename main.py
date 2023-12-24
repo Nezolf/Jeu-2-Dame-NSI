@@ -19,3 +19,5 @@ turn_of = Game.FIRST_PLAYER_TO_PLAY
 
 # Afficher le plateau
 Game.print_board(PLATEAU)
+
+pawn_position = Game.select_pawn(PLATEAU, turn_of)
