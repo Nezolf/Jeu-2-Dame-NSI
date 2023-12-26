@@ -21,3 +21,5 @@ turn_of = Game.FIRST_PLAYER_TO_PLAY
 Game.print_board(PLATEAU)
 
 pawn_position = Game.select_pawn(PLATEAU, turn_of)
+
+Game.print_move_preview(PLATEAU, pawn_position, turn_of)
