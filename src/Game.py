@@ -6,10 +6,10 @@ FIRST_PLAYER_TO_PLAY = 1
 # Dictionnaire pour transphormer l'id d'une pièce sur le plateau en un caractère à afficher
 PAWNS_CHARS = {
     0: " ",   # Case vide
-    1: "◉",   # Pion blanc
-    -1: "◎",  # Pion noir
-    2: "♚",   # Dame blanche
-    -2: "♕",  # Dame noire
+    1: "█",   # Pion blanc
+    -1: "▒",  # Pion noir
+    2: "#",   # Dame blanche
+    -2: "#",  # Dame noire
     ".": "•", # Prévisualisation
     "x": "X", # Pion pris dans le déplacement
 }
