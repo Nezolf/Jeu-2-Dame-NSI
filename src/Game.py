@@ -22,13 +22,6 @@ def print_board(board):
             print(PAWNS_CHARS[board[y][x]], end=" ")
         print(y)
     print("A B C D E F G H I J")
-
-
-# DEF -> Selection du pion
-    # Demander un entrée comme ceci -> "Selectionner un pion >> "
-        # - Transformer l'input au format "E4" en coordonées sur le plateau
-        # - Vérifier que les coordonées donné sont bien celle d'un pion du joueur
-        # - Renvoyer les coordonées valide du pion
     
 def select_pawn(board, player):
     """
@@ -51,32 +44,27 @@ def select_pawn(board, player):
         "J": 9
     }
 
-    pawn_check = False
 
-    while not pawn_check:
+    input_check = False
+    while not input_check:
+        player_input = input("Selectionner un pion (ex. A3) >> ").replace(" ", "")
 
-        input_check = False
-        while not input_check:
-            player_input = input("Selectionner un pion (ex. A3) >> ").replace(" ", "")
-
+        try:
             if len(player_input) != 2:
-                print("Entrée Invalide !")
+                raise ValueError
+                    
+            c = letter_to_num[player_input[0].upper()]
+            l = int(player_input[1])
+
+            if board[l][c] == 0:
+                print("Il n'y a pas de pion à cette position.")
+            elif board[l][c] != player:
+                print("Ce pion ne vous appartien pas.")
             else:
-                try:
-                    c = letter_to_num[player_input[0].upper()]
-                    l = int(player_input[1])
-
-                    input_check = True
+                input_check = True
                 
-                except(KeyError, ValueError):
-                    print("Entrée Invalide !")
-
-        if board[l][c] == 0:
-            print("Il n'y a pas de pion à cette position.")
-        elif board[l][c] != player:
-            print("Ce pion ne vous appartien pas.")
-        else:
-            pawn_check = True
+        except(KeyError, ValueError):
+                print("Entrée Invalide !")
 
     return l, c
         
