@@ -94,7 +94,32 @@ def print_move_preview(board, pawn, player):
     board_copy = copy.deepcopy(board)
 
     if can_take_pawn(board_copy, pawn, player):
-        takeable_pawns = []
+        
+        new_poss = []
+
+        if can_take_up_left(board_copy, l, c, player):
+            board_copy[l-1][c-1] = "x"
+            board_copy[l-2][c-2] = "."
+            new_poss.append((l-2,c-2))
+            moves[f'{l-2}{c-2}'] = {"takes": []}
+        
+        if can_take_up_right(board_copy, l, c, player):
+            board_copy[l-1][c+1] = "x"
+            board_copy[l-2][c+2] = "."
+            new_poss.append((l-2,c+2))
+        
+        if can_take_down_left(board_copy, l, c, player):
+            board_copy[l+1][c-1] = "x"
+            board_copy[l+2][c-2] = "."
+            new_poss.append((l+2,c-2))
+        
+        if can_take_down_right(board_copy, l, c, player):
+            board_copy[l+1][c+1] = "x"
+            board_copy[l+2][c+2] = "."
+            new_poss.append((l+2,c+2))
+
+        for new_l, new_c in new_poss:
+            if can_take_pawn(board_copy, (new_l, new_c), player): pass
 
 
     else:
