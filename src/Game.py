@@ -1,4 +1,5 @@
 import copy
+from src.Check_Takes import *
 
 # Définir quel joueur commence à jouer (1 -> les blancs ; -1 -> les noirs)
 FIRST_PLAYER_TO_PLAY = 1
@@ -6,12 +7,26 @@ FIRST_PLAYER_TO_PLAY = 1
 # Dictionnaire pour transphormer l'id d'une pièce sur le plateau en un caractère à afficher
 PAWNS_CHARS = {
     0: " ",   # Case vide
-    1: "█",   # Pion blanc
-    -1: "▒",  # Pion noir
-    2: "#",   # Dame blanche
-    -2: "#",  # Dame noire
-    ".": "•", # Prévisualisation
-    "x": "X", # Pion pris dans le déplacement
+    1: "b",   # Pion blanc
+    -1: "n",  # Pion noir
+    2: "B",   # Dame blanche
+    -2: "N",  # Dame noire
+    ".": "*", # Prévisualisation
+    "x": "X", # Pion pris par un coup
+}
+
+# Dictionnaire pour pouvoir transformer les coordonées de collone sur le plateau en index
+LETTER_TO_NUM = {
+        "A": 0,
+        "B": 1,
+        "C": 2,
+        "D": 3,
+        "E": 4,
+        "F": 5,
+        "G": 6,
+        "H": 7,
+        "I": 8,
+        "J": 9
 }
 
 
@@ -36,20 +51,6 @@ def select_pawn(board, player):
     :return: tuple, coordonées du pion selectionné
     """
 
-    # Dictionnaire pour pouvoir transformer les coordonées sur le plateau en index
-    letter_to_num = {
-        "A": 0,
-        "B": 1,
-        "C": 2,
-        "D": 3,
-        "E": 4,
-        "F": 5,
-        "G": 6,
-        "H": 7,
-        "I": 8,
-        "J": 9
-    }
-
     input_check = False # <- FAUX tant que l'entrée du joueur n'est pas vérifiée
                                 # C'est à dire :
                                     # - l'entrée donné corespond bien à des coordonées sur le plateau
@@ -64,7 +65,7 @@ def select_pawn(board, player):
             if len(player_input) != 2:
                 raise ValueError
                     
-            c = letter_to_num[player_input[0].upper()]
+            c = LETTER_TO_NUM[player_input[0].upper()]
             l = int(player_input[1])
 
             if board[l][c] == 0: # Vérifier que la case selectionnée n'est pas vide
@@ -85,33 +86,35 @@ def select_pawn(board, player):
         
 
 def print_move_preview(board, pawn, player):
-    """
-    Afficher le plateau avec l'appersus des coups possible avec le pion selectionné
-    :param board: list, plateau de jeu    
-    :param pawn: tuple, coordonées du pion à jouer
-    :return: None
-    """
 
-    board_copy = copy.deepcopy(board) # Copie du tableau pour pouvoir le modifier sans devoir tout rétablire sur le vrai plateau de jeu
+    moves = {}
 
-    l, c = pawn # Répartir les coordonées du pion sur deux variable pour rentre le tout plus propre
+    l, c = pawn
 
-    direction_movement = player * -1 # Définir le sens dans lequel les pion vont progresser dans le tableau
-                                     # Si c'est les blancs qui commencent, player = 1, donc 1 x -1 = -1
-                                     # Car dans notre tableau, si le pion "vas vers le haut", il doit monter d'une ligne, donc son index de ligne diminue de 1
-                                     # Et nous avons la même choses dans l'autre sens pour les noirs
+    board_copy = copy.deepcopy(board)
+
+    if can_take_pawn(board_copy, pawn, player):
+        takeable_pawns = []
+
+
+    else:
+        try:
+            if board_copy[l-player][c-1] == 0:
+                board_copy[l-player][c-1] = "."
+                moves[f'{l-player}{c-1}'] = {'takes': []}
+        except IndexError:
+            pass
+        
+        try:
+            if board_copy[l-player][c+1] == 0:
+                board_copy[l-player][c+1] = "."
+                moves[f'{l-player}{c+1}'] = {'takes': []}
+        except IndexError:
+            pass
+
     
-    if c == 0 and board_copy[l + direction_movement][c+1] == 0: # Prévisualisation pour un pion sur un bord
-        board_copy[l + direction_movement][c+1] = "."
-
-    elif c == 9 and board_copy[l + direction_movement][c-1] == 0: # Prévisualisation pour un pion sur un bord
-        board_copy[l + direction_movement][c-1] = "."
-
-    elif 0 < c < 9 and board_copy[l + direction_movement][c-1] == 0 and board_copy[l + direction_movement][c+1] == 0: # Prévisualisation pour un pion qui n'as pas de pion dans sa diagonale ET qui n'est pas sur un bord
-        board_copy[l + direction_movement][c-1] = "."
-        board_copy[l + direction_movement][c+1] = "."
-     
     print_board(board_copy)
+    return board_copy, moves
 
 
 # DEF -> Mouvement du pion
@@ -121,3 +124,47 @@ def print_move_preview(board, pawn, player):
         # - Verifier si il n'est pas possible que le jouer ne doit pas jouer autre chose (prise de pion est obligatoire si elle est possible)
     # Déplacer le pion sur le plateau 
 
+def play_move(board_preview, board, pawn, player, moves): 
+    """
+    Jouer le coup choisis par le joueur et retourner le plateau modifié
+    :param board_preview: list, plateau de jeu
+    :param pawn: tuple, coordonées du pion à jouer
+    :param player: joueur qui joue le coup
+    :return: list, list, plateau de jeu actualisé en fonction du coup joué
+    """
+
+    input_check = False # <- FAUX tant que l'entrée du joueur n'est pas vérifiée
+                                # C'est à dire :
+                                    # - l'entrée donné corespond bien à des coordonées sur le plateau
+                                    # - les coordonées corespondes bien à un coup jouable par le joueur
+    
+    while not input_check:
+
+        player_input = input("Où voulez vous déplacer ce pion ? (ex. A3) >> ").replace(" ", "")
+
+        try:
+            if len(player_input) != 2:
+                raise ValueError
+                    
+            c = LETTER_TO_NUM[player_input[0].upper()]
+            l = int(player_input[1])
+
+            if board_preview[l][c] != ".": # Vérifier que le coup selectionnée est jouable
+                print("Il n'y a pas de coup jouable à cette position.")         
+            else:
+                input_check = True # Tous les tests sont validé, la condition passe sur VRAI
+                
+        except(KeyError, ValueError):
+                print("Entrée Invalide !")
+    
+    board_copy = copy.deepcopy(board) # Copie du tableau pour pouvoir le modifier sans modifier tout de suite le vrai plateau de jeu
+
+    # Déplacer le pion joué
+    board_copy[l][c] = player # Placer le pion à sa position finale
+    board_copy[pawn[0]][pawn[1]] = 0 # Retirer le pion de sa position initiale
+
+    # Retirer les pions "mangé"
+    for taken_pawn in moves[f'{l}{c}']['takes']:
+        board_copy[taken_pawn[0]][taken_pawn[1]] = 0
+    
+    return board_copy
