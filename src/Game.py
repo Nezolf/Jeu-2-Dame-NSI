@@ -68,14 +68,22 @@ def select_pawn(board, player):
             c = LETTER_TO_NUM[player_input[0].upper()]
             l = int(player_input[1])
 
+            # Faire la liste de tous les pions du joueur qui peuvent en prendre un autre
+            players_can_take_pawns = []
+            for verif_line in range(10):
+                for verif_col in range(10):
+                    if board[verif_line][verif_col] == player and can_take_pawn(board, (verif_line, verif_col), player):
+                        players_can_take_pawns.append(f"{verif_line}{verif_col}")
+
             if board[l][c] == 0: # Vérifier que la case selectionnée n'est pas vide
                 print("Il n'y a pas de pion à cette position.")
 
             elif board[l][c] != player: # Vérifier que la case selectionnée n'est pas ocuppée par un pion de l'addversaire
                 print("Ce pion ne vous appartien pas.")
-
-            # Vérifier si le joueur ne doit pas jouer un autre coup (prise obligatoire)
             
+            elif (not (f"{l}{c}" in players_can_take_pawns)) and (len(players_can_take_pawns) != 0): # Vérifier que le joueur n'essaye pas de jouer un pion qui n'a pas le droit de jouer
+                print("Vous n'avez pas le droit de jouer ce pion (vous êtes obliger de prendre dès que vous le pouvez)")
+
             else:
                 input_check = True # Tous les tests sont validé, la condition passe su VRAI
                 
