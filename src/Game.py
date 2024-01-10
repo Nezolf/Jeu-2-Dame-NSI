@@ -101,25 +101,28 @@ def print_move_preview(board, pawn, player):
             board_copy[l-1][c-1] = "x"
             board_copy[l-2][c-2] = "."
             new_poss.append((l-2,c-2))
-            moves[f'{l-2}{c-2}'] = {"takes": []}
+            moves[f'{l-2}{c-2}'] = {"takes": [(l-1, c-1)]}
         
         if can_take_up_right(board_copy, l, c, player):
             board_copy[l-1][c+1] = "x"
             board_copy[l-2][c+2] = "."
             new_poss.append((l-2,c+2))
+            moves[f'{l-2}{c+2}'] = {"takes": [(l-1, c+1)]}
         
         if can_take_down_left(board_copy, l, c, player):
             board_copy[l+1][c-1] = "x"
             board_copy[l+2][c-2] = "."
             new_poss.append((l+2,c-2))
+            moves[f'{l+2}{c-2}'] = {"takes": [(l+1, c-1)]}
         
         if can_take_down_right(board_copy, l, c, player):
             board_copy[l+1][c+1] = "x"
             board_copy[l+2][c+2] = "."
             new_poss.append((l+2,c+2))
+            moves[f'{l+2}{c+2}'] = {"takes": [(l+1, c+1)]}
 
-        for new_l, new_c in new_poss:
-            if can_take_pawn(board_copy, (new_l, new_c), player): pass
+        #for new_l, new_c in new_poss:
+        #    if can_take_pawn(board_copy, (new_l, new_c), player): pass
 
 
     else:
@@ -187,6 +190,8 @@ def play_move(board_preview, board, pawn, player, moves):
     # Déplacer le pion joué
     board_copy[l][c] = player # Placer le pion à sa position finale
     board_copy[pawn[0]][pawn[1]] = 0 # Retirer le pion de sa position initiale
+
+
 
     # Retirer les pions "mangé"
     for taken_pawn in moves[f'{l}{c}']['takes']:

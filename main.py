@@ -33,16 +33,16 @@ player_who_plays = Game.FIRST_PLAYER_TO_PLAY
 
 while True:
     # Afficher le plateau
-    Game.print_board(DEBUG_Board)
+    Game.print_board(Board)
 
     # Faire selectionner un pion au joueur
-    pawn_position = Game.select_pawn(DEBUG_Board, player_who_plays)
+    pawn_position = Game.select_pawn(Board, player_who_plays)
 
     # Afficher la pré-visualisation du coup
-    board_preview, moves = Game.print_move_preview(DEBUG_Board, pawn_position, player_who_plays)
+    board_preview, moves = Game.print_move_preview(Board, pawn_position, player_who_plays)
 
     # Jouer le coup choisis par le joueur
-    DEBUG_Board = Game.play_move(board_preview, DEBUG_Board, pawn_position, player_who_plays, moves)
+    Board = Game.play_move(board_preview, Board, pawn_position, player_who_plays, moves)
 
     # Passer au tour de l'autre joueur
     player_who_plays *= -1
