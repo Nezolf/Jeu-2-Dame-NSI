@@ -29,6 +29,83 @@ LETTER_TO_NUM = {
         "J": 9
 }
 
+INITIAL_BOARD = [
+    [0,-1,0,-1,0,-1,0,-1,0,-1],
+    [-1,0,-1,0,-1,0,-1,0,-1,0],
+    [0,-1,0,-1,0,-1,0,-1,0,-1],
+    [-1,0,-1,0,-1,0,-1,0,-1,0],
+    [0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0],
+    [0,1,0,1,0,1,0,1,0,1],
+    [1,0,1,0,1,0,1,0,1,0],
+    [0,1,0,1,0,1,0,1,0,1],
+    [1,0,1,0,1,0,1,0,1,0]
+]
+
+
+def both_player_have_pawns(board):
+    """
+    Vérifier que tous les joueurs ont au moins 1 pion
+    :param board: list, plateau de jeux
+    :return: bool, True si les deux joueurs on au moins 1 pion, sinon False
+    """
+
+    white_pawn_count = 0
+    black_pawn_count = 0
+
+    for l in range(10):
+        for c in range(10):
+            
+            if board[l][c] == 1:
+                white_pawn_count += 1
+            elif board[l][c] == -1:
+                black_pawn_count += 1
+    
+    return white_pawn_count > 0 and black_pawn_count > 0
+
+
+def still_player_can_play(board, player):
+    """
+    Vérifier qu'un joueur à la possibilité de jouer
+    :param board: list, plateau de jeux
+    :param player: int, joueur qui est en train de jouer
+    :return: bool, True si le joueur peux jouer un coup, sinon False
+    """
+
+    player_can_play = False
+
+    for l in range(10):
+        for c in range(10):
+            if board[l][c] == player and can_move(board, l, c, board[l][c]):
+                player_can_play = True
+    
+    return player_can_play
+
+
+def get_winner(board):
+    """
+    Retourner le numéreau du joueur qui à gagné la partie
+    :param board: list, plateau de jeux
+    :return: int, 1 si le vainqueure est le joueur blanc, -1 si c'est le joueur noir et 0 si il y a égalité
+    """
+    
+    white_pawn_count = 0
+    black_pawn_count = 0
+
+    for l in range(10):
+        for c in range(10):
+            if board[l][c] in [1, 2]:
+                white_pawn_count += 1
+            elif board[l][c] in [-1, -2]:
+                black_pawn_count += 1
+    
+    if white_pawn_count > black_pawn_count:
+        return 1
+    elif black_pawn_count > white_pawn_count:
+        return -1
+    else:
+        return 0
+
 
 def print_board(board):
     """
@@ -59,7 +136,8 @@ def select_pawn(board, player):
     
     while not input_check:
 
-        player_input = input("Selectionner un pion (ex. A3) >> ").replace(" ", "")
+        player_color = "blanc" if player == 1 else "noir"
+        player_input = input(f"Joueur {player_color}, selectionnez un pion (ex. A3) >> ").replace(" ", "")
 
         try:
             if len(player_input) != 2:
@@ -80,6 +158,9 @@ def select_pawn(board, player):
 
             elif board[l][c] != player: # Vérifier que la case selectionnée n'est pas ocuppée par un pion de l'addversaire
                 print("Ce pion ne vous appartien pas.")
+
+            elif not can_move(board, l, c, player): # Vérifier que le pion selectionner peux se déplacer
+                print("Ce pion n'a aucune action possible")
             
             elif (not (f"{l}{c}" in players_can_take_pawns)) and (len(players_can_take_pawns) != 0): # Vérifier que le joueur n'essaye pas de jouer un pion qui n'a pas le droit de jouer
                 print("Vous n'avez pas le droit de jouer ce pion (vous êtes obliger de prendre dès que vous le pouvez)")
@@ -91,9 +172,12 @@ def select_pawn(board, player):
                 print("Entrée Invalide !")
 
     return l, c
-        
 
-def print_move_preview(board, pawn, player):
+
+def print_move_preview(board, pawn, player): # /!\ GERER LES PRISES A LA SUITE !
+    """
+    DOC STRING HERE
+    """
 
     moves = {}
 
@@ -129,8 +213,9 @@ def print_move_preview(board, pawn, player):
             new_poss.append((l+2,c+2))
             moves[f'{l+2}{c+2}'] = {"takes": [(l+1, c+1)]}
 
-        #for new_l, new_c in new_poss:
-        #    if can_take_pawn(board_copy, (new_l, new_c), player): pass
+
+        for new_l, new_c in new_poss:
+            if can_take_pawn(board_copy, (new_l, new_c), player): pass
 
 
     else:
@@ -153,13 +238,6 @@ def print_move_preview(board, pawn, player):
     return board_copy, moves
 
 
-# DEF -> Mouvement du pion
-    # Demander où le pion doit se déplacer
-        # - Transformer l'input au format "E4" en coordonées sur le plateau
-        # - Verifier que le pion peut accéder au coordonées donné
-        # - Verifier si il n'est pas possible que le jouer ne doit pas jouer autre chose (prise de pion est obligatoire si elle est possible)
-    # Déplacer le pion sur le plateau 
-
 def play_move(board_preview, board, pawn, player, moves): 
     """
     Jouer le coup choisis par le joueur et retourner le plateau modifié
@@ -179,6 +257,7 @@ def play_move(board_preview, board, pawn, player, moves):
         player_input = input("Où voulez vous déplacer ce pion ? (ex. A3) >> ").replace(" ", "")
 
         try:
+
             if len(player_input) != 2:
                 raise ValueError
                     
@@ -198,7 +277,6 @@ def play_move(board_preview, board, pawn, player, moves):
     # Déplacer le pion joué
     board_copy[l][c] = player # Placer le pion à sa position finale
     board_copy[pawn[0]][pawn[1]] = 0 # Retirer le pion de sa position initiale
-
 
 
     # Retirer les pions "mangé"

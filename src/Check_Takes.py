@@ -1,3 +1,26 @@
+def can_move(board, l, c, player):
+    """
+    Vérifier si un pion à la possibilité de se déplacer (en prenent un pion ou en avancent)
+    :param board: list, Plateau de jeu
+    :param l: Ligne sur lequel se trouve le pion
+    :param c: Colonne sur lequel se trouve le pion
+    :param player: Joueur qui joue le coup
+    :return: Bool, True si le pion peut se déplacer sinon False
+    """ 
+
+    if player == 1:
+        f_r = (l - player >= 0 and c + 1 < 9) and board[l-player][c+1] == 0
+        f_l = (l - player >= 0 and c - 1 > 0) and board[l-player][c-1] == 0
+
+    elif player == -1:
+        f_r = (l - player <= 9 and c + 1 < 9) and board[l-player][c+1] == 0
+        f_l = (l - player <= 9 and c - 1 > 0) and board[l-player][c-1] == 0
+
+
+    pawn_can_move = f_r or f_l
+
+    return can_take_pawn(board, (l, c), player) or pawn_can_move
+
 def can_take_up_left(board, l, c, player):
     """
     Vérifier si un pion à la possibilité de prednre un pion sur sa diagonale gauche vers le haut
