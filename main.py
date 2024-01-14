@@ -49,6 +49,8 @@ try:
                     Game.print_board(Board)
                     print("Vous pouvez effectuer une autre action dur ce tours")
                     pawn_position = new_poss
+            else:
+                player_turn = False
 
         # Passer au tour de l'autre joueur
         player_who_plays *= -1
