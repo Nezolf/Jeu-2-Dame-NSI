@@ -1,22 +1,21 @@
 import src.Game as Game
 
 # Initialiser un plateau avec les dispositions de pions de base
-GAME_Board = Game.INITIAL_BOARD
 
 DEBUG_Board = [
-    [0,0,0,0,0,1,0,0,0,0],
-    [0,0,0,0,0,0,0,1,0,0],
     [0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,-1,0,-1,0,0],
+    [0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,-1,0,0,0,0],
+    [0,0,0,0,1,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0],
-    [0,0,1,0,0,0,0,0,0,0],
-    [0,0,0,-1,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0]
 ]
 
-Board = GAME_Board
+Board = Game.INITIAL_BOARD
 
 print("Bienvenue sur ce jeu de Dames !\nPour commencer à jouer, nous vous invitons à lire ces quelques règles ;\n  - Le pions blancs sont symboliser par un b, et les pions noirs par un n\n  - Le joueur qui joue en premier est toujours celui qui joue les pions blancs\n  - A chaques tours, plusieures entrée vous serons demandé, il faut sésire la case corespondent à\n    ce qui vous est demander, pour répondre, il sufit de répondre par la lettre de la colone suivit\n    du numéreau de la ligne comme ceci -> A3 ou même f7\n  - Le gagnant de la partie est décider en fonction du joueur à qui il reste des pion à la fin de la partie\n  - La fin de la partie est décidé quand un des joueur ne peux bouger\n    un de ses pions ou qu'un joueur a perdu tout ses pions\n  - Si vous avez la possibilité de prendre un pion adversse, vous avez obligation de prednre un pion")
 input("\n\n si ces règles vous conviennes, vous pouvez appuyer sur [ENTER] pour lancer le jeu  ")
@@ -30,14 +29,26 @@ try:
         # Afficher le plateau
         Game.print_board(Board)
 
+        player_turn = True
+
         # Faire selectionner un pion au joueur
         pawn_position = Game.select_pawn(Board, player_who_plays)
 
-        # Afficher la pré-visualisation du coup
-        board_preview, moves = Game.print_move_preview(Board, pawn_position, player_who_plays)
+        while player_turn:
+            
+            # Afficher la pré-visualisation du coup
+            board_preview, moves = Game.print_move_preview(Board, pawn_position, player_who_plays)
 
-        # Jouer le coup choisis par le joueur
-        Board = Game.play_move(board_preview, Board, pawn_position, player_who_plays, moves)
+            # Jouer le coup choisis par le joueur
+            Board, new_poss = Game.play_move(board_preview, Board, pawn_position, player_who_plays, moves)
+
+            if moves[f"{new_poss[0]}{new_poss[1]}"]["take"] != None:
+                if not Game.can_take_pawn(Board, new_poss, player_who_plays):
+                    player_turn = False
+                else:
+                    Game.print_board(Board)
+                    print("Vous pouvez effectuer une autre action dur ce tours")
+                    pawn_position = new_poss
 
         # Passer au tour de l'autre joueur
         player_who_plays *= -1

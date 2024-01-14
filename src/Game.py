@@ -179,57 +179,46 @@ def print_move_preview(board, pawn, player): # /!\ GERER LES PRISES A LA SUITE !
     DOC STRING HERE
     """
 
-    moves = {}
+    moves = {} # f"{new_l}{new_c}": {"init-pos": (l, c), "final_pos": (new_l, new_c), "take": (l, c)}
 
     l, c = pawn
 
     board_copy = copy.deepcopy(board)
 
     if can_take_pawn(board_copy, pawn, player):
-        
-        new_poss = []
 
         if can_take_up_left(board_copy, l, c, player):
             board_copy[l-1][c-1] = "x"
             board_copy[l-2][c-2] = "."
-            new_poss.append((l-2,c-2))
-            moves[f'{l-2}{c-2}'] = {"takes": [(l-1, c-1)]}
+            moves[f'{l-2}{c-2}'] = {"init-pos": (l, c), "final_pos": (l-2, c-2), "take": (l-1, c-1)}
         
         if can_take_up_right(board_copy, l, c, player):
             board_copy[l-1][c+1] = "x"
             board_copy[l-2][c+2] = "."
-            new_poss.append((l-2,c+2))
-            moves[f'{l-2}{c+2}'] = {"takes": [(l-1, c+1)]}
+            moves[f'{l-2}{c+2}'] = {"init-pos": (l, c), "final_pos": (l-2, c+2), "take": (l-1, c+1)}
         
         if can_take_down_left(board_copy, l, c, player):
             board_copy[l+1][c-1] = "x"
             board_copy[l+2][c-2] = "."
-            new_poss.append((l+2,c-2))
-            moves[f'{l+2}{c-2}'] = {"takes": [(l+1, c-1)]}
+            moves[f'{l+2}{c-2}'] = {"init-pos": (l, c), "final_pos": (l+2, c-2), "take": (l+1, c-1)}
         
         if can_take_down_right(board_copy, l, c, player):
             board_copy[l+1][c+1] = "x"
             board_copy[l+2][c+2] = "."
-            new_poss.append((l+2,c+2))
-            moves[f'{l+2}{c+2}'] = {"takes": [(l+1, c+1)]}
-
-
-        for new_l, new_c in new_poss:
-            if can_take_pawn(board_copy, (new_l, new_c), player): pass
-
+            moves[f'{l+2}{c+2}'] = {"init-pos": (l, c), "final_pos": (l+2, c+2), "take": (l+1, c+1)}
 
     else:
         try:
             if board_copy[l-player][c-1] == 0:
                 board_copy[l-player][c-1] = "."
-                moves[f'{l-player}{c-1}'] = {'takes': []}
+                moves[f'{l-player}{c-1}'] = {"init-pos": (l, c), "final_pos": (l-player, c-1), "take": None}
         except IndexError:
             pass
         
         try:
             if board_copy[l-player][c+1] == 0:
                 board_copy[l-player][c+1] = "."
-                moves[f'{l-player}{c+1}'] = {'takes': []}
+                moves[f'{l-player}{c+1}'] = {"init-pos": (l, c), "final_pos": (l-player, c+1), "take": None}
         except IndexError:
             pass
 
@@ -278,9 +267,9 @@ def play_move(board_preview, board, pawn, player, moves):
     board_copy[l][c] = player # Placer le pion à sa position finale
     board_copy[pawn[0]][pawn[1]] = 0 # Retirer le pion de sa position initiale
 
-
     # Retirer les pions "mangé"
-    for taken_pawn in moves[f'{l}{c}']['takes']:
+    taken_pawn = moves[f"{l}{c}"]["take"]
+    if taken_pawn != None:
         board_copy[taken_pawn[0]][taken_pawn[1]] = 0
-    
-    return board_copy
+       
+    return board_copy, (l, c)
