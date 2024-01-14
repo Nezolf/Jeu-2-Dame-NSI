@@ -29,6 +29,7 @@ LETTER_TO_NUM = {
         "J": 9
 }
 
+# Modèle d'un plateau de Dames dans sa disposition de base
 INITIAL_BOARD = [
     [0,-1,0,-1,0,-1,0,-1,0,-1],
     [-1,0,-1,0,-1,0,-1,0,-1,0],
@@ -174,12 +175,16 @@ def select_pawn(board, player):
     return l, c
 
 
-def print_move_preview(board, pawn, player): # /!\ GERER LES PRISES A LA SUITE !
+def print_move_preview(board, pawn, player): 
     """
-    DOC STRING HERE
+    Générer la prévisualisation des déplacement possible d'un pion
+    :param board: list, plateau de jeu
+    :param pawn: tuple, coordonées du pion sous la forme (ligne, colone)
+    :param player: int, joueur qui joue le coup
+    :return: tuple, copie du plateau avec les marcages de prévisualisation et les données des coups possible par le pion
     """
 
-    moves = {} # f"{new_l}{new_c}": {"init-pos": (l, c), "final_pos": (new_l, new_c), "take": (l, c)}
+    moves = {}
 
     l, c = pawn
 
@@ -233,7 +238,7 @@ def play_move(board_preview, board, pawn, player, moves):
     :param board_preview: list, plateau de jeu
     :param pawn: tuple, coordonées du pion à jouer
     :param player: joueur qui joue le coup
-    :return: list, list, plateau de jeu actualisé en fonction du coup joué
+    :return: tuple, plateau de jeu actualisé en fonction du coup joué et nouvelle position du pion joué
     """
 
     input_check = False # <- FAUX tant que l'entrée du joueur n'est pas vérifiée
