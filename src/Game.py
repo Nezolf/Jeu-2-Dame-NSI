@@ -65,7 +65,7 @@ def both_player_have_pawns(board):
     return white_pawn_count > 0 and black_pawn_count > 0
 
 
-def still_player_can_play(board, player):
+def still_player_can_play(board, player): # Fais par Paul
     """
     Vérifier qu'un joueur à la possibilité de jouer
     :param board: list, plateau de jeux
@@ -83,7 +83,7 @@ def still_player_can_play(board, player):
     return player_can_play
 
 
-def get_winner(board):
+def get_winner(board): # Fais par Paul
     """
     Retourner le numéreau du joueur qui à gagné la partie
     :param board: list, plateau de jeux
@@ -108,7 +108,7 @@ def get_winner(board):
         return 0
 
 
-def print_board(board):
+def print_board(board): # Fais par Paul
     """
     Afficher de manière textuel le plateau de jeu dans la console
     :param board: list, plateau de jeu
@@ -164,7 +164,7 @@ def select_pawn(board, player):
                 print("Ce pion n'a aucune action possible")
             
             elif (not (f"{l}{c}" in players_can_take_pawns)) and (len(players_can_take_pawns) != 0): # Vérifier que le joueur n'essaye pas de jouer un pion qui n'a pas le droit de jouer
-                print("Vous n'avez pas le droit de jouer ce pion (vous êtes obliger de prendre dès que vous le pouvez)")
+                print("Vous n'avez pas le droit de jouer ce pion (vous êtes obligé de prendre dès que vous le pouvez)")
 
             else:
                 input_check = True # Tous les tests sont validé, la condition passe su VRAI
